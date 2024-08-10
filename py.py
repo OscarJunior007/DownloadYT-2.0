@@ -13,42 +13,89 @@ def descargar():
     url = link.get()
     if not url:
         messagebox.showinfo(title='Informacion',message='Debes pegar un link')
-    if salsa.get() == 'on':
+    if salsa.get() == 'on' and mp4.get() == 'on':
         ydl_opts = {
-            'format': 'bestvideo + bestaudio/best', #FFmpeg
+            'format': 'bestvideo + bestaudio/best',  # FFmpeg
             'outtmpl': 'C:\\Musica\\salsa\\ %(title)s.%(ext)s',
             'merge_output_format': 'mp4'
         }
-    elif vallenato.get() == 'on':
+    elif salsa.get() == 'on' and mp3.get() == 'on':
+        ydl_opts = {
+            'format': 'bestaudio',  # Solo audio en máxima calidad
+            'outtmpl': 'C:\\Musica\\salsa\\  %(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',  # Extraer audio con FFmpeg
+                'preferredcodec': 'mp3',  # Formato de audio preferido
+                'preferredquality': '320',  # Calidad de audio (192 kbps)
+            }],
+        }
+    elif vallenato.get() == 'on' and mp4.get() == 'on':
         ydl_opts = {
             'format': 'bestvideo + bestaudio/best',  # FFmpeg
             'outtmpl': 'C:\\Musica\\Vallenato\\ %(title)s.%(ext)s',
             'merge_output_format': 'mp4'
         }
-    elif reggeton.get() == 'on':
+    elif vallenato.get() == 'on' and mp3.get() == 'on':
         ydl_opts = {
-            'format': 'bestvideo + bestaudio/best',  # FFmpeg
-            'outtmpl': 'C:\\Musica\\reggeton\\ %(title)s.%(ext)s',
-            'merge_output_format': 'mp4'
+            'format': 'bestaudio',  # Solo audio en máxima calidad
+            'outtmpl': 'C:\\Musica\\Vallenato\\  %(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',  # Extraer audio con FFmpeg
+                'preferredcodec': 'mp3',  # Formato de audio preferido
+                'preferredquality': '320',  # Calidad de audio (192 kbps)
+            }],
         }
-    elif champeta.get() == 'on':
+    elif champeta.get() == 'on' and mp4.get() == 'on':
         ydl_opts = {
             'format': 'bestvideo + bestaudio/best',  # FFmpeg
             'outtmpl': 'C:\\Musica\\champeta\\ %(title)s.%(ext)s',
             'merge_output_format': 'mp4'
         }
+    elif champeta.get() == 'on' and mp3.get() == 'on':
+        ydl_opts = {
+            'format': 'bestaudio',  # Solo audio en máxima calidad
+            'outtmpl': 'C:\\Musica\\champeta\\  %(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',  # Extraer audio con FFmpeg
+                'preferredcodec': 'mp3',  # Formato de audio preferido
+                'preferredquality': '320',  # Calidad de audio (192 kbps)
+            }],
+        }
+    elif reggeton.get() == 'on' and mp4.get() == 'on':
+        ydl_opts = {
+            'format': 'bestvideo + bestaudio/best',  # FFmpeg
+            'outtmpl': 'C:\\Musica\\champeta\\ %(title)s.%(ext)s',
+            'merge_output_format': 'mp4'
+        }
+    elif reggeton.get() == 'on' and mp3.get() == 'on':
+        ydl_opts = {
+            'format': 'bestaudio',  # Solo audio en máxima calidad
+            'outtmpl': 'C:\\Musica\\reggeton\\  %(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',  # Extraer audio con FFmpeg
+                'preferredcodec': 'mp3',  # Formato de audio preferido
+                'preferredquality': '320',  # Calidad de audio (192 kbps)
+            }],
+        }
     else:
         ydl_opts = {
-            'format': 'bump854x480/bestvideo[height<=480]+bestaudio/best',  # FFmpeg
-            'outtmpl': 'D:\\Musica_sin_carpeta\\ %(title)s.%(ext)s',
-            'merge_output_format': 'mp4'
+            'format': 'bestaudio',  # Solo audio en máxima calidad
+            'outtmpl': 'C:\\Musica\\ %(title)s.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',  # Extraer audio con FFmpeg
+                'preferredcodec': 'mp3',  # Formato de audio preferido
+                'preferredquality': '320',  # Calidad de audio (192 kbps)
+            }],
         }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
             info = ydl.extract_info(url,download=False)
             titulo = info.get('title','titulo desconocido')
-            messagebox.showinfo(title='infomacion',message=f'{titulo}, se descargo exitosamente!')
+            if mp3.get() =='on':
+                messagebox.showinfo(title='infomacion',message=f'{titulo}, se descargo exitosamente en formato MP3!')
+            elif mp4.get() == 'on':
+                messagebox.showinfo(title='infomacion', message=f'{titulo}, se descargo exitosamente en formato MP4!')
         print("Descarga completa")
     except Exception as e:
         print(f"Hubo un problema{e}")
@@ -91,6 +138,11 @@ def selected_check():
        vallenato_check.deselect()
        salsa_check.deselect()
        champeta_check.deselect()
+   if mp4.get() == 'on':
+       mp3_check.deselect()
+
+   if mp3.get() == 'on':
+       mp4_check.deselect()
 
 vallenato = tkinter.StringVar(value='off')
 vallenato_check = CTkCheckBox(master=ventana,text='Crear carpeta Vallenato',variable=vallenato,onvalue='on',offvalue='off',command=selected_check)
@@ -107,6 +159,14 @@ champeta_check.place(relx='0.12',rely='0.35',anchor='center')
 reggeton = tkinter.StringVar(value='off')
 reggeton_check = CTkCheckBox(master=ventana,text='Crear carpeta reggeton',variable=reggeton,onvalue='on',offvalue='off',command=selected_check)
 reggeton_check.place(relx='0.12',rely='0.45',anchor='center')
+
+mp4 = tkinter.StringVar(value='off')
+mp4_check = CTkCheckBox(master=ventana,text='MP4',variable=mp4,onvalue='on',offvalue='off',command=selected_check)
+mp4_check.place(relx='0.10',rely='0.9',anchor='center')
+
+mp3 = tkinter.StringVar(value='off')
+mp3_check = CTkCheckBox(master=ventana,text='MP3',variable=mp3,onvalue='on',offvalue='off',command=selected_check)
+mp3_check.place(relx='0.10',rely='0.8',anchor='center')
 
 boton_descargar = CTkButton(master=ventana,text='Descargar',text_color='#000000',font=('Lucida Console',20), fg_color= "#FFFFFF",command=descargar,corner_radius=10,hover=True,hover_color="#FF0000",border_color='#FFFFFF')
 boton_descargar.place(relx='0.5',rely='0.6',anchor='center')
